@@ -937,7 +937,6 @@ const DocumentPage = () => {
   const ScoreDial = ({ score }) => {
     const r = 52
     const cx = 70, cy = 70
-    const circ = 2 * Math.PI * r
     // Arc from 135° to 405° (270° sweep)
     const pct = Math.max(0, Math.min(100, score)) / 100
     const color = getScoreColor(score)
