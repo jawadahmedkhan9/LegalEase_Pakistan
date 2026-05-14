@@ -1,0 +1,218 @@
+{
+  "assess-1": {
+    "id": "assess-1",
+    "course_id": "1",
+    "title": "Constitutional Law — Final Quiz",
+    "description": "Test your understanding of the 1973 Constitution",
+    "pass_mark": 70,
+    "active": true,
+    "created_at": "2024-01-01T00:00:00",
+    "updated_at": "2024-01-01T00:00:00",
+    "questions": [
+      {
+        "id": "q1",
+        "text": "In which year was the current Constitution of Pakistan enacted?",
+        "options": [
+          "1956",
+          "1962",
+          "1973",
+          "1985"
+        ],
+        "correct": 2,
+        "explanation": "The Constitution of Pakistan was adopted on 10 April 1973."
+      },
+      {
+        "id": "q2",
+        "text": "Which Article of the Constitution deals with Freedom of Speech?",
+        "options": [
+          "Article 9",
+          "Article 19",
+          "Article 25",
+          "Article 37"
+        ],
+        "correct": 1,
+        "explanation": "Article 19 guarantees freedom of speech and expression subject to reasonable restrictions."
+      },
+      {
+        "id": "q3",
+        "text": "How many members are in the National Assembly of Pakistan?",
+        "options": [
+          "272",
+          "342",
+          "100",
+          "400"
+        ],
+        "correct": 1,
+        "explanation": "The National Assembly consists of 342 seats including reserved seats for women and minorities."
+      },
+      {
+        "id": "q4",
+        "text": "Which body has the power to interpret the Constitution finally?",
+        "options": [
+          "Federal Shariat Court",
+          "High Courts",
+          "Supreme Court",
+          "Parliament"
+        ],
+        "correct": 2,
+        "explanation": "The Supreme Court of Pakistan is the apex court with final judicial authority."
+      },
+      {
+        "id": "q5",
+        "text": "Article 25A of the Constitution relates to:",
+        "options": [
+          "Right to property",
+          "Right to education",
+          "Freedom of religion",
+          "Right to information"
+        ],
+        "correct": 1,
+        "explanation": "Article 25A mandates free and compulsory education for children aged 5-16."
+      }
+    ]
+  },
+  "assess-2": {
+    "id": "assess-2",
+    "course_id": "2",
+    "title": "Family Law — Final Quiz",
+    "description": "Test your knowledge of Pakistani family laws",
+    "pass_mark": 70,
+    "active": true,
+    "created_at": "2024-01-01T00:00:00",
+    "updated_at": "2024-01-01T00:00:00",
+    "questions": [
+      {
+        "id": "q1",
+        "text": "Under the Muslim Family Laws Ordinance 1961, a man must obtain permission from the Arbitration Council before:",
+        "options": [
+          "Performing Nikah",
+          "Contracting a second marriage",
+          "Paying Mehr",
+          "Registering divorce"
+        ],
+        "correct": 1,
+        "explanation": "Section 6 of MFLO 1961 requires Arbitration Council permission before contracting a subsequent marriage."
+      },
+      {
+        "id": "q2",
+        "text": "Khula is:",
+        "options": [
+          "Divorce given by husband",
+          "Divorce sought by wife",
+          "Mutual divorce",
+          "Judicial separation"
+        ],
+        "correct": 1,
+        "explanation": "Khula is the right of a wife to seek dissolution of marriage, usually by returning the Mehr."
+      },
+      {
+        "id": "q3",
+        "text": "The period of Iddat after divorce is:",
+        "options": [
+          "1 month",
+          "2 months",
+          "3 menstrual cycles",
+          "6 months"
+        ],
+        "correct": 2,
+        "explanation": "Iddat after talaq is generally three menstrual cycles (or 3 months for post-menopausal women)."
+      },
+      {
+        "id": "q4",
+        "text": "Who has the right of Hizanat (custody) for a son up to age 7?",
+        "options": [
+          "Father",
+          "Mother",
+          "Paternal grandfather",
+          "Court"
+        ],
+        "correct": 1,
+        "explanation": "Under Hanafi law, the mother retains Hizanat for a son until the age of 7."
+      },
+      {
+        "id": "q5",
+        "text": "Mehr (dower) in a marriage is:",
+        "options": [
+          "A gift from wife to husband",
+          "An obligatory payment by husband to wife",
+          "A loan",
+          "Optional"
+        ],
+        "correct": 1,
+        "explanation": "Mehr is an obligatory gift of money or property from the husband to the wife upon marriage."
+      }
+    ]
+  },
+  "assess-3": {
+    "id": "assess-3",
+    "course_id": "4",
+    "title": "Labor Law — Final Quiz",
+    "description": "Test your knowledge of Pakistani labor legislation",
+    "pass_mark": 60,
+    "active": true,
+    "created_at": "2024-01-01T00:00:00",
+    "updated_at": "2024-01-01T00:00:00",
+    "questions": [
+      {
+        "id": "q1",
+        "text": "EOBI stands for:",
+        "options": [
+          "Employees Ordinance and Benefits Institute",
+          "Employees Old-Age Benefits Institution",
+          "Employment Office and Business Index",
+          "None of the above"
+        ],
+        "correct": 1,
+        "explanation": "EOBI — Employees Old-Age Benefits Institution — provides pension and other social security benefits."
+      },
+      {
+        "id": "q2",
+        "text": "Under the Factories Act, the maximum working hours per week are:",
+        "options": [
+          "40 hours",
+          "48 hours",
+          "54 hours",
+          "60 hours"
+        ],
+        "correct": 1,
+        "explanation": "The Factories Act 1934 limits working hours to 48 hours per week for adult workers."
+      },
+      {
+        "id": "q3",
+        "text": "The Protection Against Harassment of Women at Workplace Act was enacted in:",
+        "options": [
+          "2004",
+          "2010",
+          "2015",
+          "2018"
+        ],
+        "correct": 1,
+        "explanation": "The Harassment at Workplace Act was enacted in 2010 in Pakistan."
+      },
+      {
+        "id": "q4",
+        "text": "NIRC refers to:",
+        "options": [
+          "National Insurance Regulatory Commission",
+          "National Industrial Relations Commission",
+          "National Investment and Revenue Commission",
+          "None"
+        ],
+        "correct": 1,
+        "explanation": "NIRC — National Industrial Relations Commission — adjudicates industrial disputes."
+      },
+      {
+        "id": "q5",
+        "text": "Notice period for retrenchment under the Industrial Relations Act is:",
+        "options": [
+          "7 days",
+          "14 days",
+          "One month",
+          "Three months"
+        ],
+        "correct": 2,
+        "explanation": "Standard notice period for retrenchment is one month or payment in lieu thereof."
+      }
+    ]
+  }
+}

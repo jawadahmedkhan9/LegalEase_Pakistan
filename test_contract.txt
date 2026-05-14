@@ -1,0 +1,11 @@
+
+    SERVICE AGREEMENT
+    
+    This Service Agreement is entered into between ABC Company and XYZ Services.
+    
+    1. Services: Software development and maintenance
+    2. Duration: 12 months
+    3. Payment: PKR 500,000 per month
+    4. Termination: 60 days written notice
+    5. Confidentiality: Both parties agree to maintain confidentiality
+    

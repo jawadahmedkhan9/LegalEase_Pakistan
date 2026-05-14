@@ -1,0 +1,891 @@
+from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+import chromadb
+import json
+import os
+from datetime import datetime
+from dotenv import load_dotenv
+from groq import Groq
+import PyPDF2
+import docx
+import io
+from typing import List, Optional, Dict, Any
+import uvicorn
+import re
+from collections import Counter
+
+# Load environment variables
+load_dotenv()
+
+app = FastAPI(title="LegalEase Pakistan API - Enhanced", version="2.0.0")
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify exact origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Configure Groq client
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+# Pydantic models
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+class ChatRequest(BaseModel):
+    message: str
+    conversation_history: List[ChatMessage] = []
+
+class ChatResponse(BaseModel):
+    response: str
+    sources: List[Dict[str, Any]] = []
+    collections_used: List[str] = []
+    status: str = "success"
+
+class ContractAnalysis(BaseModel):
+    summary: str
+    risks: List[str]
+    missing: List[str]
+    recommendations: List[str]
+    timeline: str
+    estimated_cost: str
+
+# ============================================================================
+# ENHANCED: AI-POWERED QUERY CLASSIFIER
+# ============================================================================
+
+def classify_query_with_ai(query: str) -> dict:
+    """
+    Use AI to intelligently classify the query and determine:
+    1. Which law collections to search
+    2. Query type (informational, procedural, urgent, etc.)
+    3. Response format preference
+    """
+    classification_prompt = f"""Analyze this legal query and classify it:
+
+QUERY: "{query}"
+
+Respond with ONLY a JSON object (no other text):
+{{
+    "collections": ["list", "of", "relevant", "collections"],
+    "query_type": "informational|procedural|urgent|comparison|greeting",
+    "response_format": "conversational|structured|step_by_step|detailed",
+    "urgency_level": "low|medium|high",
+    "needs_specific_sections": true|false
+}}
+
+Available collections:
+- pakistan_constitution: Constitutional law, fundamental rights, government structure
+- banking_laws: Banking, loans, accounts, financial matters
+- police_laws: Criminal law, FIR, theft, arrests, police procedures
+- family_laws: Marriage, divorce, custody, inheritance
+- land_property_laws: Property ownership, transfer, leases, land disputes
+- religious_laws: Islamic law, religious matters, personal status
+
+Query type definitions:
+- informational: "What is X?", "Tell me about Y"
+- procedural: "How do I X?", "What are the steps for Y?"
+- urgent: Involves immediate legal issues or rights violations
+- comparison: Comparing laws or legal concepts
+- greeting: Social pleasantries
+
+Response format:
+- conversational: Natural, friendly tone (greetings, simple questions)
+- structured: Organized with clear sections (complex questions)
+- step_by_step: Numbered steps for procedures
+- detailed: Comprehensive analysis with citations"""
+
+    try:
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "system", "content": "You are a legal query classifier. Respond ONLY with valid JSON."},
+                {"role": "user", "content": classification_prompt}
+            ],
+            temperature=0.1,
+            max_tokens=300
+        )
+        
+        result_text = response.choices[0].message.content.strip()
+        # Clean up response - remove markdown code blocks if present
+        result_text = re.sub(r'```json\s*|\s*```', '', result_text).strip()
+        classification = json.loads(result_text)
+        
+        # Validate classification
+        if "collections" not in classification:
+            classification["collections"] = ["pakistan_constitution"]
+        if "query_type" not in classification:
+            classification["query_type"] = "informational"
+        if "response_format" not in classification:
+            classification["response_format"] = "structured"
+        if "urgency_level" not in classification:
+            classification["urgency_level"] = "medium"
+        if "needs_specific_sections" not in classification:
+            classification["needs_specific_sections"] = True
+            
+        return classification
+        
+    except Exception as e:
+        print(f"AI classification error: {e}, falling back to keyword-based")
+        # Fallback to keyword-based classification
+        return {
+            "collections": detect_query_intent_keyword(query),
+            "query_type": "informational",
+            "response_format": "structured",
+            "urgency_level": "medium",
+            "needs_specific_sections": True
+        }
+
+def detect_query_intent_keyword(query: str) -> list:
+    """
+    Keyword-based fallback for query classification
+    (Your original function as backup)
+    """
+    query_lower = query.lower()
+    relevant_collections = []
+    
+    collection_keywords = {
+        "pakistan_constitution": [
+            "constitution", "constitutional", "article", "fundamental rights", 
+            "president", "parliament", "judiciary", "supreme court", "high court",
+            "federal", "provincial", "amendment", "preamble", "treason"
+        ],
+        "banking_laws": [
+            "bank", "banking", "account", "loan", "credit", "debit", "atm",
+            "cheque", "check", "deposit", "withdrawal", "interest", "mortgage",
+            "financial", "sbp", "state bank", "money", "cash", "funds"
+        ],
+        "police_laws": [
+            "police", "fir", "theft", "robbery", "crime", "criminal", "arrest",
+            "investigation", "station", "officer", "custody", "bail", "warrant",
+            "ppc", "penal code", "offense", "murder", "assault", "i-8 markaz"
+        ],
+        "family_laws": [
+            "marriage", "divorce", "nikah", "talaq", "custody", "child",
+            "maintenance", "alimony", "inheritance", "will", "property rights",
+            "family", "spouse", "wife", "husband", "children", "khula", "dowry"
+        ],
+        "land_property_laws": [
+            "land", "property", "real estate", "ownership", "title", "deed",
+            "transfer", "sale", "purchase", "lease", "rent", "tenant",
+            "landlord", "eviction", "possession", "registry", "mutation"
+        ],
+        "religious_laws": [
+            "islamic", "sharia", "shariah", "religious", "mosque", "imam",
+            "muslim", "nikah", "halal", "haram", "zakat", "waqf", "prayer"
+        ]
+    }
+    
+    for collection_name, keywords in collection_keywords.items():
+        if any(keyword in query_lower for keyword in keywords):
+            relevant_collections.append(collection_name)
+    
+    if not relevant_collections:
+        relevant_collections = ["pakistan_constitution"]
+    
+    return relevant_collections
+
+# ============================================================================
+# ENHANCED: HYBRID SEARCH (Semantic + Keyword)
+# ============================================================================
+
+def extract_keywords(query: str) -> List[str]:
+    """Extract important keywords from query for keyword-based search"""
+    # Remove common words and extract meaningful terms
+    stop_words = {
+        'what', 'is', 'the', 'a', 'an', 'in', 'on', 'at', 'to', 'for',
+        'of', 'and', 'or', 'but', 'i', 'you', 'he', 'she', 'it', 'they',
+        'my', 'your', 'his', 'her', 'our', 'their', 'me', 'him', 'them',
+        'can', 'could', 'would', 'should', 'may', 'might', 'must',
+        'about', 'how', 'when', 'where', 'why', 'which', 'who'
+    }
+    
+    words = re.findall(r'\b\w+\b', query.lower())
+    keywords = [word for word in words if word not in stop_words and len(word) > 2]
+    
+    return keywords
+
+def keyword_search(collection, keywords: List[str], n_results: int = 5) -> List[dict]:
+    """
+    Perform keyword-based search using ChromaDB's where_document filter
+    """
+    try:
+        if not keywords:
+            return []
+        
+        # Get all documents and filter by keywords
+        all_results = []
+        
+        for keyword in keywords[:5]:  # Limit to top 5 keywords to avoid too many queries
+            try:
+                results = collection.query(
+                    query_texts=[keyword],
+                    n_results=n_results,
+                    where_document={"$contains": keyword}
+                )
+                
+                if results and results.get("documents") and results["documents"][0]:
+                    for i, doc in enumerate(results["documents"][0]):
+                        if not doc:
+                            continue
+                        
+                        metadata = results["metadatas"][0][i] if results.get("metadatas") else {}
+                        distance = results["distances"][0][i] if results.get("distances") else 1.0
+                        
+                        all_results.append({
+                            "content": doc,
+                            "metadata": metadata,
+                            "distance": distance,
+                            "collection": collection.name,
+                            "search_type": "keyword",
+                            "matched_keyword": keyword
+                        })
+            except Exception as e:
+                print(f"Keyword search error for '{keyword}': {e}")
+                continue
+        
+        return all_results
+        
+    except Exception as e:
+        print(f"Keyword search error: {e}")
+        return []
+
+def semantic_search(collection, query: str, n_results: int = 5) -> List[dict]:
+    """
+    Perform semantic search using ChromaDB's embedding-based search
+    """
+    try:
+        results = collection.query(
+            query_texts=[query],
+            n_results=n_results
+        )
+        
+        if not results or not results.get("documents") or not results["documents"]:
+            return []
+        
+        formatted_results = []
+        for i, doc in enumerate(results["documents"][0]):
+            if not doc:
+                continue
+                
+            metadata = results["metadatas"][0][i] if results.get("metadatas") else {}
+            distance = results["distances"][0][i] if results.get("distances") else 1.0
+            
+            formatted_results.append({
+                "content": doc,
+                "metadata": metadata,
+                "distance": distance,
+                "collection": collection.name,
+                "search_type": "semantic"
+            })
+        
+        return formatted_results
+        
+    except Exception as e:
+        print(f"Semantic search error: {e}")
+        return []
+
+def hybrid_search(collection, query: str, n_results: int = 5) -> List[dict]:
+    """
+    Combine semantic and keyword search with intelligent ranking
+    """
+    # Extract keywords for keyword search
+    keywords = extract_keywords(query)
+    
+    # Perform both searches
+    semantic_results = semantic_search(collection, query, n_results)
+    keyword_results = keyword_search(collection, keywords, n_results)
+    
+    # Combine and deduplicate results
+    all_results = semantic_results + keyword_results
+    
+    # Deduplicate based on content similarity
+    unique_results = []
+    seen_contents = set()
+    
+    for result in all_results:
+        content_hash = hash(result["content"][:100])  # Hash first 100 chars for dedup
+        if content_hash not in seen_contents:
+            seen_contents.add(content_hash)
+            unique_results.append(result)
+    
+    # Rank results: prioritize semantic matches but boost keyword matches
+    def rank_score(result):
+        base_score = 1.0 - result["distance"]  # Higher is better (inverted distance)
+        
+        # Boost keyword matches
+        if result.get("search_type") == "keyword":
+            base_score *= 1.2
+        
+        # Boost if multiple keywords matched
+        if result.get("matched_keyword"):
+            keyword_count = sum(1 for kw in keywords if kw in result["content"].lower())
+            base_score *= (1.0 + keyword_count * 0.1)
+        
+        return base_score
+    
+    # Sort by rank score
+    unique_results.sort(key=rank_score, reverse=True)
+    
+    return unique_results[:n_results]
+
+# ============================================================================
+# CHROMADB HELPER FUNCTIONS
+# ============================================================================
+
+def get_chroma_client():
+    """Get ChromaDB client"""
+    try:
+        return chromadb.PersistentClient("./chroma_db")
+    except Exception as e:
+        print(f"Database connection error: {e}")
+        return None
+
+# ============================================================================
+# ENHANCED: CONTEXT RETRIEVAL WITH BETTER SOURCE ATTRIBUTION
+# ============================================================================
+
+def fetch_relevant_context_enhanced(query: str, classification: dict, top_k: int = 10) -> dict:
+    """
+    Enhanced context retrieval with:
+    - AI-powered collection selection
+    - Hybrid search
+    - Better source tracking
+    """
+    client_db = get_chroma_client()
+    if not client_db:
+        return {
+            "context": "Database connection error.",
+            "collections_searched": [],
+            "results_found": 0,
+            "sources": []
+        }
+    
+    try:
+        # Get collections from AI classification
+        collections_to_search = classification.get("collections", ["pakistan_constitution"])
+        
+        # Get available collections
+        all_collections = client_db.list_collections()
+        available_names = [col.name for col in all_collections]
+        
+        # Filter to existing collections
+        collections_to_search = [
+            name for name in collections_to_search 
+            if name in available_names
+        ]
+        
+        if not collections_to_search:
+            collections_to_search = available_names[:3]  # Search first 3 if none specified
+        
+        # Search all relevant collections with hybrid search
+        all_results = []
+        for collection_name in collections_to_search:
+            try:
+                collection = client_db.get_collection(name=collection_name)
+                results = hybrid_search(collection, query, n_results=5)
+                all_results.extend(results)
+            except Exception as e:
+                print(f"Error searching collection {collection_name}: {e}")
+                continue
+        
+        # Sort by relevance
+        all_results.sort(key=lambda x: x["distance"])
+        
+        # Take top results
+        top_results = all_results[:top_k]
+        
+        if not top_results:
+            return {
+                "context": "No relevant sections found in the database.",
+                "collections_searched": collections_to_search,
+                "results_found": 0,
+                "sources": []
+            }
+        
+        # Format context with better source attribution
+        context_parts = []
+        sources = []
+        collections_used = set()
+        
+        for idx, result in enumerate(top_results, 1):
+            metadata = result["metadata"]
+            collection_name = result["collection"]
+            collections_used.add(collection_name)
+            
+            # Extract metadata
+            title = metadata.get("title", "Untitled Section")
+            section_path = metadata.get("section_path", "")
+            law_name = metadata.get("law_name", collection_name.replace("_", " ").title())
+            source = metadata.get("source", "")
+            search_type = result.get("search_type", "semantic")
+            
+            # Build source reference
+            source_ref = {
+                "id": f"source_{idx}",
+                "law": law_name,
+                "title": title,
+                "section": section_path,
+                "collection": collection_name,
+                "relevance": f"{(1.0 - result['distance']):.2%}",
+                "search_type": search_type
+            }
+            sources.append(source_ref)
+            
+            # Format context entry with source ID
+            context_entry = f"[SOURCE {idx}] {law_name}\n"
+            if title:
+                context_entry += f"Title: {title}\n"
+            if section_path:
+                context_entry += f"Section: {section_path}\n"
+            context_entry += f"Content: {result['content']}\n"
+            context_entry += "-" * 60 + "\n\n"
+            
+            context_parts.append(context_entry)
+        
+        context_string = "\n".join(context_parts)
+        
+        return {
+            "context": context_string,
+            "collections_searched": list(collections_used),
+            "results_found": len(top_results),
+            "sources": sources
+        }
+        
+    except Exception as e:
+        print(f"Context retrieval error: {e}")
+        return {
+            "context": f"Error retrieving context: {str(e)}",
+            "collections_searched": [],
+            "results_found": 0,
+            "sources": []
+        }
+
+# ============================================================================
+# ENHANCED: ADAPTIVE RESPONSE GENERATION
+# ============================================================================
+
+def generate_adaptive_response(query: str, context_data: dict, classification: dict, 
+                                conversation_history: List[ChatMessage] = []) -> str:
+    """
+    Generate responses with adaptive structure based on query type
+    """
+    current_date = datetime.now().strftime("%B %d, %Y")
+    
+    context = context_data.get("context", "")
+    results_found = context_data.get("results_found", 0)
+    sources = context_data.get("sources", [])
+    
+    query_type = classification.get("query_type", "informational")
+    response_format = classification.get("response_format", "structured")
+    urgency = classification.get("urgency_level", "medium")
+    
+    # Build adaptive system prompt based on query type
+    if query_type == "greeting":
+        system_prompt = f"""You are LegalEase, a friendly AI legal assistant for Pakistani law.
+
+Respond naturally to the greeting. Keep it warm, brief (2-3 sentences), and offer help.
+
+Example: "Hello! I'm LegalEase, your AI assistant for Pakistani law. How can I help you today?"
+"""
+    
+    elif response_format == "conversational":
+        db_context = f"DATABASE CONTEXT:\n{context}" if results_found > 0 else "No specific legal provisions found in database."
+        system_prompt = f"""You are LegalEase, a friendly AI legal assistant specializing in Pakistani law.
+    Today is {current_date}.
+
+    Query Type: {query_type}
+    Urgency: {urgency}
+
+    INSTRUCTIONS:
+    - Respond in a NATURAL, CONVERSATIONAL tone
+    - Keep it concise (3-5 sentences for simple questions)
+    - Use simple language, avoid legal jargon unless necessary
+    - Be helpful and encouraging
+
+    {db_context}
+
+    Respond naturally and helpfully."""
+        
+    elif response_format == "step_by_step":
+        system_prompt = f"""You are LegalEase, an AI legal assistant specializing in Pakistani law.
+Today is {current_date}.
+
+Query Type: {query_type}
+Urgency: {urgency}
+Results Found: {results_found}
+
+DATABASE CONTEXT:
+{context if results_found > 0 else "No specific legal provisions found."}
+
+RESPONSE FORMAT:
+Provide a clear STEP-BY-STEP guide using this structure:
+
+### Understanding Your Situation
+
+[Brief 1-2 sentence overview]
+
+### Legal Basis
+
+{f"[Quote relevant sections from DATABASE CONTEXT with proper attribution]" if results_found > 0 else "[General legal principles apply]"}
+
+### Step-by-Step Process
+
+1. **[Step 1 Title]**
+   - [Details]
+   - Required: [documents/actions]
+
+2. **[Step 2 Title]**
+   - [Details]
+   
+[Continue as needed]
+
+### Timeline & Costs
+
+- Expected Timeline: [timeframe]
+- Estimated Costs: PKR [amount range]
+
+### Important Notes
+
+- [Key considerations]
+- [Warnings or tips]
+
+Use clear markdown formatting. Be specific and actionable."""
+
+    elif response_format == "detailed":
+        system_prompt = f"""You are LegalEase, an AI legal assistant specializing in Pakistani law.
+Today is {current_date}.
+
+Query Type: {query_type}
+Urgency: {urgency}
+Results Found: {results_found}
+
+DATABASE CONTEXT:
+{context if results_found > 0 else "No specific legal provisions found."}
+
+RESPONSE FORMAT:
+Provide a COMPREHENSIVE, DETAILED analysis:
+
+### Legal Analysis
+
+[Thorough explanation of the legal situation]
+
+### Applicable Laws & Provisions
+
+{f"[Cite and explain ALL relevant sections from DATABASE CONTEXT]" if results_found > 0 else "[General legal principles]"}
+
+### Your Rights & Obligations
+
+- [List rights]
+- [List obligations]
+
+### Recommended Course of Action
+
+[Detailed guidance with multiple options if applicable]
+
+### Procedural Requirements
+
+- Required Documents: [list]
+- Steps to Follow: [numbered list]
+- Authorities to Contact: [list]
+
+### Timeline & Financial Considerations
+
+- Processing Time: [estimate]
+- Costs: PKR [detailed breakdown]
+
+### Additional Considerations
+
+[Risks, alternatives, important notes]
+
+### Next Steps
+
+[Clear action items]
+
+Use professional legal language but remain accessible. Be thorough."""
+
+    else:  # structured (default)
+        system_prompt = f"""You are LegalEase, an AI legal assistant specializing in Pakistani law.
+Today is {current_date}.
+
+Query Type: {query_type}
+Urgency: {urgency}
+Results Found: {results_found}
+
+DATABASE CONTEXT:
+{context if results_found > 0 else "No specific legal provisions found."}
+
+RESPONSE FORMAT:
+Use this STRUCTURED format:
+
+### [Brief Descriptive Title]
+
+[1-2 sentence overview]
+
+### What the Law Says
+
+{f"[Quote relevant sections from DATABASE CONTEXT with source numbers]" if results_found > 0 else "No specific provisions found in database for this exact query."}
+
+### Practical Explanation
+
+[Explain in simple terms what this means]
+
+### What You Should Do
+
+- [Action point 1]
+- [Action point 2]
+- [Action point 3]
+
+### Additional Information
+
+- Timeline: [estimate]
+- Costs: PKR [range]
+- Important: [key warnings or notes]
+
+Use markdown. Be clear and professional but friendly."""
+
+    # Build conversation history
+    messages = [{"role": "system", "content": system_prompt}]
+    
+    # Add recent conversation history
+    recent_history = conversation_history[-6:] if len(conversation_history) > 6 else conversation_history
+    for msg in recent_history:
+        messages.append({"role": msg.role, "content": msg.content})
+    
+    # Add current query
+    messages.append({"role": "user", "content": query})
+    
+    try:
+        # Adjust parameters based on query type
+        if query_type == "greeting":
+            temperature = 0.7
+            max_tokens = 150
+        elif response_format == "conversational":
+            temperature = 0.5
+            max_tokens = 500
+        elif response_format == "detailed":
+            temperature = 0.1
+            max_tokens = 2500
+        else:
+            temperature = 0.2
+            max_tokens = 1500
+        
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=messages,
+            temperature=temperature,
+            max_tokens=max_tokens
+        )
+        
+        response_text = response.choices[0].message.content
+        
+        # Early return for greetings and simple conversational responses (no sources needed)
+        if query_type in ["greeting", "conversational"]:
+            return response_text
+        
+        # Add source attribution footer if sources available
+        if results_found > 0 and sources and query_type != "greeting":
+            response_text += "\n\n---\n\n**Sources Referenced:**\n"
+            for source in sources[:5]:  # Show top 5 sources
+                response_text += f"\n- {source['law']} - {source['title']}"
+                if source.get('section'):
+                    response_text += f" ({source['section']})"
+        
+        return response_text
+        
+    except Exception as e:
+        print(f"Error generating response: {e}")
+        return f"I apologize, but I encountered an error processing your request. Please try again."
+
+# ============================================================================
+# CONTRACT ANALYSIS (UNCHANGED)
+# ============================================================================
+
+def extract_text_from_pdf(file_content: bytes) -> str:
+    """Extract text from PDF file"""
+    try:
+        pdf_file = io.BytesIO(file_content)
+        reader = PyPDF2.PdfReader(pdf_file)
+        text = ""
+        for page in reader.pages:
+            text += page.extract_text() or ""
+        return text
+    except Exception as e:
+        return f"Error extracting PDF: {str(e)}"
+
+def extract_text_from_docx(file_content: bytes) -> str:
+    """Extract text from DOCX file"""
+    try:
+        docx_file = io.BytesIO(file_content)
+        doc = docx.Document(docx_file)
+        return "\n".join([para.text for para in doc.paragraphs])
+    except Exception as e:
+        return f"Error extracting DOCX: {str(e)}"
+
+def analyze_contract_text(contract_text: str) -> ContractAnalysis:
+    """Analyze contract text and return structured analysis"""
+    contract_prompt = f"""You are LegalEase, an AI legal contract verifier specializing in Pakistani law.
+Analyze the following contract strictly under Pakistani law.
+
+Respond with a JSON object:
+{{
+    "summary": "Brief summary of the contract",
+    "risks": ["risk1", "risk2", "risk3"],
+    "missing": ["missing clause 1", "missing clause 2"],
+    "recommendations": ["recommendation 1", "recommendation 2"],
+    "timeline": "Expected timeline for implementation",
+    "estimated_cost": "PKR cost estimate"
+}}
+
+CONTRACT TEXT:
+{contract_text[:6000]}
+"""
+    
+    try:
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "system", "content": "You are a legal contract analyzer. Respond only with valid JSON."},
+                {"role": "user", "content": contract_prompt}
+            ],
+            temperature=0.1,
+            max_tokens=1000
+        )
+        
+        result = json.loads(response.choices[0].message.content)
+        return ContractAnalysis(**result)
+    except Exception as e:
+        return ContractAnalysis(
+            summary="Contract analysis completed with limited data.",
+            risks=["Unable to perform detailed risk analysis", "Please consult a legal professional"],
+            missing=["Standard Pakistani law compliance clauses may be missing"],
+            recommendations=["Review with a Pakistani legal expert", "Ensure compliance with local regulations"],
+            timeline="2-4 weeks for professional review",
+            estimated_cost="PKR 25,000 - 100,000"
+        )
+
+# ============================================================================
+# API ROUTES
+# ============================================================================
+
+@app.get("/")
+async def root():
+    return {
+        "message": "LegalEase Pakistan API - Enhanced Version",
+        "version": "2.0.0",
+        "features": [
+            "AI-powered query classification",
+            "Hybrid search (semantic + keyword)",
+            "Adaptive response structure",
+            "Enhanced source attribution",
+            "Multi-collection search"
+        ],
+        "status": "active"
+    }
+
+@app.post("/chat", response_model=ChatResponse)
+async def chat_endpoint(request: ChatRequest):
+    """
+    Enhanced chat endpoint with AI classification and adaptive responses
+    """
+    try:
+        # Step 1: Classify query with AI
+        classification = classify_query_with_ai(request.message)
+        print(f"Query classified as: {classification}")
+        
+        # Step 2: Fetch context with hybrid search
+        context_data = fetch_relevant_context_enhanced(
+            query=request.message,
+            classification=classification,
+            top_k=10
+        )
+        
+        # Step 3: Generate adaptive response
+        response = generate_adaptive_response(
+            query=request.message,
+            context_data=context_data,
+            classification=classification,
+            conversation_history=request.conversation_history
+        )
+        
+        return ChatResponse(
+            response=response,
+            sources=context_data.get("sources", []),
+            collections_used=context_data.get("collections_searched", []),
+            status="success"
+        )
+        
+    except Exception as e:
+        print(f"Chat endpoint error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/analyze-contract")
+async def analyze_contract(file: UploadFile = File(...)):
+    try:
+        file_content = await file.read()
+        
+        if file.content_type == "application/pdf":
+            contract_text = extract_text_from_pdf(file_content)
+        elif file.content_type in ["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword"]:
+            contract_text = extract_text_from_docx(file_content)
+        elif file.content_type == "text/plain":
+            contract_text = file_content.decode("utf-8")
+        else:
+            raise HTTPException(status_code=400, detail="Unsupported file type")
+        
+        analysis = analyze_contract_text(contract_text)
+        return analysis
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    client_db = get_chroma_client()
+    collections_count = len(client_db.list_collections()) if client_db else 0
+    
+    return {
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "version": "2.0.0",
+        "database_connected": client_db is not None,
+        "collections_available": collections_count
+    }
+
+@app.get("/collections")
+async def list_collections():
+    """List all available law collections"""
+    client_db = get_chroma_client()
+    if not client_db:
+        raise HTTPException(status_code=500, detail="Database connection error")
+    
+    collections = client_db.list_collections()
+    return {
+        "collections": [
+            {
+                "name": col.name,
+                "count": col.count()
+            }
+            for col in collections
+        ]
+    }
+
+# Serve static files (for production)
+if os.path.exists("build"):
+    app.mount("/", StaticFiles(directory="build", html=True), name="static")
+
+if __name__ == "__main__":
+    uvicorn.run(
+        "App:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+        log_level="info"
+    )

@@ -1,0 +1,288 @@
+{
+  "assess-337a6042": {
+    "id": "assess-337a6042",
+    "course_id": "course-police-law",
+    "title": "Pakistani Police Laws and Regulations — Knowledge Assessment",
+    "description": "AI-generated from actual Pakistani Police Law text.",
+    "pass_mark": 70,
+    "active": true,
+    "ai_generated": true,
+    "created_at": "2026-03-06T05:11:00.044325",
+    "updated_at": "2026-03-06T05:11:00.044325",
+    "questions": [
+      {
+        "id": "q1",
+        "text": "What does the expression 'member of a police-force' mean in the Police (Incitement to Disaffection) Act 1922?",
+        "options": [
+          "Any person appointed or enrolled for the performance of police duties under any enactment specified in the Schedule",
+          "Any person appointed or enrolled for the performance of police duties under any enactment",
+          "Any person who has completed police training",
+          "Any person who is a citizen of Pakistan"
+        ],
+        "correct": 0,
+        "explanation": "The expression 'member of a police-force' is defined in the Police (Incitement to Disaffection) Act 1922 as any person appointed or enrolled for the performance of police duties under any enactment specified in the Schedule",
+        "law_reference": "Police (Incitement to Disaffection) Act 1922 — Definition"
+      },
+      {
+        "id": "q2",
+        "text": "What is required for a Court to proceed to the trial of any offence under the Police (Incitement to Disaffection) Act 1922?",
+        "options": [
+          "The previous sanction, or on the complaint, of the District Magistrate",
+          "The permission of the Federal Government",
+          "The approval of the Provincial Government",
+          "The consent of the police force"
+        ],
+        "correct": 0,
+        "explanation": "No Court shall proceed to the trial of any offence under this Act except with the previous sanction, or on the complaint, of the District Magistrate",
+        "law_reference": "Police (Incitement to Disaffection) Act 1922 — Sanction to trial of offences by subordinate Courts"
+      },
+      {
+        "id": "q3",
+        "text": "Who is the head of the Airports Security Force?",
+        "options": [
+          "The Director General appointed by the Federal Government",
+          "The Inspector General appointed by the Provincial Government",
+          "The Chief Executive appointed by the Federal Government",
+          "The Commissioner appointed by the Provincial Government"
+        ],
+        "correct": 0,
+        "explanation": "The head of the Force shall be a Director General appointed by the Federal Government",
+        "law_reference": "Airports Security Force Act 1975 — Constitution of the Airports Security Force"
+      },
+      {
+        "id": "q4",
+        "text": "To which areas does the Police (Incitement to Disaffection) Act 1922 extend?",
+        "options": [
+          "The whole of Pakistan",
+          "Only the Provincial areas",
+          "Only the Federal areas",
+          "Only the rural areas"
+        ],
+        "correct": 0,
+        "explanation": "It extends to the whole of Pakistan",
+        "law_reference": "Police (Incitement to Disaffection) Act 1922 — Short title, extent and commencement"
+      },
+      {
+        "id": "q5",
+        "text": "What is the function of the Airports Security Force?",
+        "options": [
+          "Ensuring security of all airports, aerodromes, aircraft and civil aviation installations",
+          "Maintaining law and order in the Provincial areas",
+          "Protecting the Federal Government properties",
+          "Regulating the movement of vehicles on highways"
+        ],
+        "correct": 0,
+        "explanation": "The Federal Government may constitute and maintain a force to be called the Airport Security Force for performing the following functions: ensuring security of all airports, aerodromes, aircraft and civil aviation installations",
+        "law_reference": "Airports Security Force Act 1975 — Power to constitute and maintain the Airports Security Force and its functions"
+      },
+      {
+        "id": "q6",
+        "text": "Who administers the Airports Security Force?",
+        "options": [
+          "The Director General",
+          "The Inspector General",
+          "The Chief Executive",
+          "The Commissioner"
+        ],
+        "correct": 0,
+        "explanation": "The administration of the Force shall vest in the Director General who shall administer it in accordance with the Act, rules, and orders of the Federal Government",
+        "law_reference": "Airports Security Force Act 1975 — Administration of the Force"
+      },
+      {
+        "id": "q7",
+        "text": "What is the minimum rank of the Court that can try any offence under the Police (Incitement to Disaffection) Act 1922?",
+        "options": [
+          "A Magistrate of the first class",
+          "A Magistrate of the second class",
+          "A Sessions Judge",
+          "A High Court Judge"
+        ],
+        "correct": 0,
+        "explanation": "No Court inferior to that of a Magistrate of the first class shall try any offence under this Act",
+        "law_reference": "Police (Incitement to Disaffection) Act 1922 — Trial of cases"
+      },
+      {
+        "id": "q8",
+        "text": "What is the function of the Pakistan Railways Police?",
+        "options": [
+          "Preventing loss to Railway property, ensuring proper conduct of persons on Railways, maintaining law and order",
+          "Maintaining law and order in the Provincial areas",
+          "Protecting the Federal Government properties",
+          "Regulating the movement of vehicles on highways"
+        ],
+        "correct": 0,
+        "explanation": "The Federal Government may constitute, control and maintain a force to be called the Pakistan Railways Police for performing functions within specified territorial limits: preventing loss to Railway property, ensuring proper conduct of persons on Railways, maintaining law and order",
+        "law_reference": "Pakistan Railways Police Act 1977 — Power to constitute, control and maintain the Pakistan Railways Police and its functions"
+      },
+      {
+        "id": "q9",
+        "text": "Can a member of the police force of any Province discharge the functions of a police officer in any part of Pakistan beyond his Province?",
+        "options": [
+          "Yes, and shall be deemed to be a member of the police force of that part",
+          "No, and shall not be deemed to be a member of the police force of that part",
+          "Yes, but only with the permission of the Federal Government",
+          "No, but only with the permission of the Provincial Government"
+        ],
+        "correct": 0,
+        "explanation": "A member of the police force of any Province may discharge the functions of a police officer in any part of Pakistan beyond his Province and shall, while doing so, be deemed to be a member of the police force of that part",
+        "law_reference": "Police Act 1888 — Employment of police officers beyond the province to which they belong"
+      },
+      {
+        "id": "q10",
+        "text": "What is the punishment for intentionally causing disaffection towards Pakistan or the Government established by law in Pakistan amongst the members of a police-force?",
+        "options": [
+          "Imprisonment which may extend to six months, or with fine which may extend to two thousand rupees",
+          "Imprisonment which may extend to one year, or with fine which may extend to five thousand rupees",
+          "Imprisonment which may extend to three years, or with fine which may extend to ten thousand rupees",
+          "Imprisonment which may extend to five years, or with fine which may extend to twenty thousand rupees"
+        ],
+        "correct": 0,
+        "explanation": "Whoever intentionally causes or attempts to cause, or does any act which he knows is likely to cause, disaffection towards Pakistan or the Government established by law in Pakistan amongst the members of a police-force shall be punished with imprisonment which may extend to six months, or with fine which may extend to two thousand rupees",
+        "law_reference": "Police (Incitement to Disaffection) Act 1922 — Penalty for causing disaffection, etc."
+      }
+    ]
+  },
+  "assess-41452a31": {
+    "id": "assess-41452a31",
+    "course_id": "course-religious-law",
+    "title": "Pakistani Madrasah Education Board Ordinance 2001: Powers and Functions — Knowledge Assessment",
+    "description": "AI-generated from actual Pakistani Religious Law text.",
+    "pass_mark": 70,
+    "active": true,
+    "ai_generated": true,
+    "created_at": "2026-03-06T05:11:09.375964",
+    "updated_at": "2026-03-06T05:11:09.375964",
+    "questions": [
+      {
+        "id": "q1",
+        "text": "What is required for a court to take cognizance of an offence under the Ehtram-e-Ramazan Ordinance 1981?",
+        "options": [
+          "A complaint in writing by any person",
+          "A complaint in writing by a person authorised to arrest",
+          "A court can take cognizance without any complaint",
+          "A complaint in writing by the Federal Government"
+        ],
+        "correct": 1,
+        "explanation": "A complaint in writing is required by a person authorised to arrest under sub-section (1) of section 7 or by the officer in charge of the Police-Station.",
+        "law_reference": "Ehtram-e-Ramazan Ordinance 1981 — Section 7"
+      },
+      {
+        "id": "q2",
+        "text": "What is the role of the Academic Council of the Pakistan Madrasah Education Board?",
+        "options": [
+          "To advise and assist the Board in its functions",
+          "To oversee the financial matters of the Board",
+          "To manage the daily operations of the Board",
+          "To make laws for the education sector"
+        ],
+        "correct": 0,
+        "explanation": "The Academic Council advises and assists the Board in the performance of its functions.",
+        "law_reference": "Pakistan Madrasah Education (Establishment and Affiliation of Model Dini Madaris) Board Ordinance 2001 — Academic Council"
+      },
+      {
+        "id": "q3",
+        "text": "What is the extent of the Publication of the Holy Quran (Elimination of Printing Errors) Act 1973?",
+        "options": [
+          "Whole of Pakistan",
+          "Whole of Islamabad Capital Territory",
+          "Whole of Punjab",
+          "Whole of Sindh"
+        ],
+        "correct": 1,
+        "explanation": "The Act extends to the whole of Islamabad Capital Territory.",
+        "law_reference": "Publication of the Holy Quran (Elimination of Printing Errors) Act 1973 — Section 1"
+      },
+      {
+        "id": "q4",
+        "text": "What is prohibited during fasting hours in the month of Ramazan under the Ehtram-e-Ramazan Ordinance 1981?",
+        "options": [
+          "Eating, drinking, or smoking in private places",
+          "Eating, drinking, or smoking in public places",
+          "Not eating, drinking, or smoking at all",
+          "Only drinking in public places"
+        ],
+        "correct": 1,
+        "explanation": "No person who is under an obligation to fast shall eat, drink or smoke in a public place during fasting hours.",
+        "law_reference": "Ehtram-e-Ramazan Ordinance 1981 — Prohibition of eating, etc., in public places"
+      },
+      {
+        "id": "q5",
+        "text": "What is the penalty for contravening the provisions of the Publication of the Holy Quran (Elimination of Printing Errors) Act 1973?",
+        "options": [
+          "Imprisonment for a term which may extend to 1 year, or with fine",
+          "Imprisonment for a term which may extend to 3 years, or with fine",
+          "Imprisonment for a term which may extend to 5 years, or with fine",
+          "Imprisonment for a term which may extend to 10 years, or with fine"
+        ],
+        "correct": 1,
+        "explanation": "The penalty is imprisonment for a term which may extend to three years, or with fine amounting to not less than twenty thousand rupees.",
+        "law_reference": "Publication of the Holy Quran (Elimination of Printing Errors) Act 1973 — Penalty"
+      },
+      {
+        "id": "q6",
+        "text": "What is the composition of the Quran Board under the Publication of the Holy Quran (Elimination of Printing Errors) Act 1973?",
+        "options": [
+          "Prominent Ulema, Huffaz and Qaris of all schools of thought amongst Muslims",
+          "Only prominent Ulema amongst Muslims",
+          "Only Huffaz amongst Muslims",
+          "Only Qaris amongst Muslims"
+        ],
+        "correct": 0,
+        "explanation": "The Quran Board comprises prominent Ulema, Huffaz and Qaris of all schools of thought amongst Muslims.",
+        "law_reference": "Publication of the Holy Quran (Elimination of Printing Errors) Act 1973 — Quran Board"
+      },
+      {
+        "id": "q7",
+        "text": "What is the supreme law of Pakistan under the Enforcement of Shari'ah Act 1991?",
+        "options": [
+          "The Constitution of Pakistan",
+          "The Shari'ah",
+          "The laws enacted by the Parliament",
+          "The laws enacted by the Provincial Assembly"
+        ],
+        "correct": 1,
+        "explanation": "The Shari'ah, that is to say, the Injunctions of Islam as laid down in the Holy Quran and Sunnah, shall be the supreme law of Pakistan.",
+        "law_reference": "Enforcement of Shari'ah Act 1991 — Supremacy of Shari'ah"
+      },
+      {
+        "id": "q8",
+        "text": "Who has the power to enter and arrest under the Ehtram-e-Ramazan Ordinance 1981?",
+        "options": [
+          "Any person",
+          "A Magistrate, the Chairman of a District Council or a Municipal Committee",
+          "The Federal Government",
+          "The Supreme Court"
+        ],
+        "correct": 1,
+        "explanation": "A Magistrate, the Chairman of a District Council or a Municipal Committee or a Town Committee, the Mayor of a Municipal Corporation, or the Chairman or a Member of a District Zakat and Ushr Committee has the power to enter and arrest.",
+        "law_reference": "Ehtram-e-Ramazan Ordinance 1981 — Power to enter and arrest"
+      },
+      {
+        "id": "q9",
+        "text": "What is the role of the Chairman of the Pakistan Madrasah Education Board?",
+        "options": [
+          "To oversee the financial matters of the Board",
+          "To manage the daily operations of the Board",
+          "To preside over the meetings of the Board and be the principal executive officer",
+          "To make laws for the education sector"
+        ],
+        "correct": 2,
+        "explanation": "The Chairman shall be the principal executive officer and shall preside over the meetings of the Board.",
+        "law_reference": "Pakistan Madrasah Education (Establishment and Affiliation of Model Dini Madaris) Board Ordinance 2001 — Chairman"
+      },
+      {
+        "id": "q10",
+        "text": "What is the State's responsibility regarding the rights of women under the Enforcement of Shari'ah Act 1991?",
+        "options": [
+          "To affect the rights of women as guaranteed by the Constitution",
+          "To not affect the rights of women as guaranteed by the Constitution",
+          "To enact new laws for the rights of women",
+          "To eliminate the rights of women"
+        ],
+        "correct": 1,
+        "explanation": "The rights of women as guaranteed by the Constitution shall not be affected.",
+        "law_reference": "Enforcement of Shari'ah Act 1991 — Rights of women not to be affected"
+      }
+    ]
+  }
+}

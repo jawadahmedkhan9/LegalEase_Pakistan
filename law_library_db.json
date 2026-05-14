@@ -1,0 +1,100 @@
+{
+  "lib-1": {
+    "id": "lib-1",
+    "title": "Constitution of Pakistan 1973",
+    "category": "Constitutional Law",
+    "description": "The supreme law of Pakistan, outlining fundamental rights, governance structure, and distribution of powers.",
+    "year": 1973,
+    "tags": [
+      "constitution",
+      "fundamental rights",
+      "parliament",
+      "judiciary"
+    ],
+    "download_url": "https://pakistancode.gov.pk/english/constitution",
+    "active": true,
+    "created_at": "2024-01-01T00:00:00"
+  },
+  "lib-2": {
+    "id": "lib-2",
+    "title": "Pakistan Penal Code 1860",
+    "category": "Criminal Law",
+    "description": "The main criminal code governing offences and punishments in Pakistan.",
+    "year": 1860,
+    "tags": [
+      "criminal",
+      "offences",
+      "punishment",
+      "PPC"
+    ],
+    "download_url": "https://pakistancode.gov.pk/english/ppc",
+    "active": true,
+    "created_at": "2024-01-01T00:00:00"
+  },
+  "lib-3": {
+    "id": "lib-3",
+    "title": "Muslim Family Laws Ordinance 1961",
+    "category": "Family Law",
+    "description": "Governs marriage, divorce, and family matters for Muslims in Pakistan.",
+    "year": 1961,
+    "tags": [
+      "family",
+      "marriage",
+      "divorce",
+      "nikah",
+      "talaq"
+    ],
+    "download_url": "https://pakistancode.gov.pk/english/mflo",
+    "active": true,
+    "created_at": "2024-01-01T00:00:00"
+  },
+  "lib-4": {
+    "id": "lib-4",
+    "title": "Transfer of Property Act 1882",
+    "category": "Property Law",
+    "description": "Defines the rules for the transfer of property between parties in Pakistan.",
+    "year": 1882,
+    "tags": [
+      "property",
+      "real estate",
+      "transfer",
+      "sale deed"
+    ],
+    "download_url": "https://pakistancode.gov.pk/english/topa",
+    "active": true,
+    "created_at": "2024-01-01T00:00:00"
+  },
+  "lib-5": {
+    "id": "lib-5",
+    "title": "Industrial Relations Act 2012",
+    "category": "Labor Law",
+    "description": "Regulates collective bargaining, trade unions, and industrial disputes.",
+    "year": 2012,
+    "tags": [
+      "labor",
+      "employment",
+      "trade union",
+      "NIRC"
+    ],
+    "download_url": "https://pakistancode.gov.pk/english/ira",
+    "active": true,
+    "created_at": "2024-01-01T00:00:00"
+  },
+  "lib-6": {
+    "id": "lib-6",
+    "title": "Prevention of Electronic Crimes Act 2016 (PECA)",
+    "category": "Cyber Law",
+    "description": "Pakistan's cybercrime law covering online offences, digital fraud, and hate speech.",
+    "year": 2016,
+    "tags": [
+      "cyber",
+      "digital",
+      "online",
+      "PECA",
+      "social media"
+    ],
+    "download_url": "https://pakistancode.gov.pk/english/peca",
+    "active": true,
+    "created_at": "2024-01-01T00:00:00"
+  }
+}
