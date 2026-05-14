@@ -941,7 +941,6 @@ const DocumentPage = () => {
     // Arc from 135° to 405° (270° sweep)
     const pct = Math.max(0, Math.min(100, score)) / 100
     const arcLen = pct * circ * 0.75
-    const gap = circ - arcLen
     const color = getScoreColor(score)
 
     const polarToXY = (deg, radius) => {
@@ -1367,7 +1366,7 @@ const DocumentPage = () => {
                                   {law.name}
                                 </span>
                                 {law.year && (
-                                  <span style={{ fontSize: "11px", color: "var(--color-text-secondary)", background: "#e0f2fe", padding: "1px 6px", borderRadius: "10px", color: "#0369a1" }}>
+                                  <span style={{ fontSize: "11px", background: "#e0f2fe", padding: "1px 6px", borderRadius: "10px", color: "#0369a1" }}>
                                     {law.year}
                                   </span>
                                 )}
