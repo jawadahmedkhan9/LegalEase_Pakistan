@@ -940,7 +940,6 @@ const DocumentPage = () => {
     const circ = 2 * Math.PI * r
     // Arc from 135° to 405° (270° sweep)
     const pct = Math.max(0, Math.min(100, score)) / 100
-    const arcLen = pct * circ * 0.75
     const color = getScoreColor(score)
 
     const polarToXY = (deg, radius) => {
